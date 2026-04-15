@@ -40,9 +40,19 @@ async function getPool() {
   if (!pool) {
     try {
       pool = await sql.connect(sqlConfig);
-      console.log("Connected to SQL Server");
+      console.log(`[SQL] Conectado com sucesso ao servidor: ${sqlConfig.server}`);
     } catch (err) {
-      console.error("SQL Connection Error:", err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error("--------------------------------------------------");
+      console.error("ERRO DE CONEXÃO SQL SERVER:");
+      console.error(errorMessage);
+      
+      if (errorMessage.includes("EAI_AGAIN") || errorMessage.includes("getaddrinfo")) {
+        console.error("\n>>> CAUSA PROVÁVEL: O nome do servidor 'SRVEVOAZDB01' não pôde ser resolvido.");
+        console.error(">>> SOLUÇÃO: Use o ENDEREÇO IP do servidor nas configurações (Secrets -> DB_SERVER).");
+      }
+      
+      console.error("--------------------------------------------------");
       throw err;
     }
   }
@@ -148,6 +158,30 @@ const isMockMode = () => {
   return process.env.USE_MOCK_DATA === "true" || process.env.USE_MOCK_DATA === "1";
 };
 
+// Status Endpoint
+app.get("/api/status", async (req, res) => {
+  const mockMode = isMockMode();
+  let dbConnected = false;
+  let dbError = null;
+
+  if (!mockMode) {
+    try {
+      await getPool();
+      dbConnected = true;
+    } catch (err) {
+      dbError = err instanceof Error ? err.message : String(err);
+    }
+  }
+
+  res.json({
+    status: mockMode ? "mock" : (dbConnected ? "connected" : "error"),
+    server: sqlConfig.server,
+    database: sqlConfig.database,
+    error: dbError,
+    usingFallback: !mockMode && !dbConnected
+  });
+});
+
 // Generic Procedure Execution
 app.get("/api/procedure/:name", async (req, res) => {
   const { name } = req.params;
@@ -190,15 +224,22 @@ app.get("/api/procedure/:name", async (req, res) => {
       res.json(result.recordset);
     }
   } catch (err) {
-    console.error(`Error executing procedure ${name}:`, err);
-    
-    // AUTO-FALLBACK: If connection fails, serve mock data anyway to keep the app alive
     const errorMessage = err instanceof Error ? err.message : String(err);
+    
+    // DNS / Connection Error Handling
     if (errorMessage.includes("EAI_AGAIN") || errorMessage.includes("getaddrinfo") || errorMessage.includes("ConnectionError")) {
-      console.warn(`[FALLBACK] Database connection failed. Serving mock data for ${name} instead.`);
+      console.error(`[SQL ERROR] Falha ao conectar em ${sqlConfig.server}: ${errorMessage}`);
+      console.warn(`[FALLBACK] Ativando dados de demonstração para ${name}.`);
+      
+      // Log a very clear instruction for the user
+      if (errorMessage.includes("EAI_AGAIN") || errorMessage.includes("getaddrinfo")) {
+        console.info(">>> DICA: O nome do servidor não pôde ser resolvido. Tente usar o ENDEREÇO IP em vez do nome 'SRVEVOAZDB01'.");
+      }
+      
       return res.json(getMockData(name));
     }
 
+    console.error(`Error executing procedure ${name}:`, err);
     res.status(500).json({ 
       error: "DATABASE_ERROR", 
       message: errorMessage,

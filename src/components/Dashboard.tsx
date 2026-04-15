@@ -116,6 +116,7 @@ export default function Dashboard() {
   const [annualTotal, setAnnualTotal] = useState(0);
   const [monthlyTotal, setMonthlyTotal] = useState(0);
   const [comparisonData, setComparisonData] = useState<any[]>([]);
+  const [dbStatus, setDbStatus] = useState<{ status: string; server: string; error: string | null; usingFallback: boolean } | null>(null);
 
   // Detail Modal State
   const [detailType, setDetailType] = useState<'pagar' | 'receber' | 'caixa' | null>(null);
@@ -276,6 +277,12 @@ export default function Dashboard() {
       }
     } finally {
       setLoading(false);
+      try {
+        const status = await api.getStatus();
+        setDbStatus(status);
+      } catch (e) {
+        console.error("Failed to fetch DB status", e);
+      }
     }
   };
 
@@ -334,20 +341,38 @@ export default function Dashboard() {
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-[#4a4f54] p-8 rounded-3xl shadow-xl shadow-black/10">
           <div className="flex flex-col gap-6">
             <EvoLogo />
-            <div className="flex items-center gap-3 bg-white/10 p-2 rounded-xl border border-white/10 w-fit backdrop-blur-sm">
-              <Building2 className="w-4 h-4 text-[#00a9b4]" />
-              <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                <SelectTrigger className="w-[280px] border-none bg-transparent h-8 focus:ring-0 font-medium text-white">
-                  <SelectValue placeholder="Selecione a Empresa" />
-                </SelectTrigger>
-                <SelectContent>
-                  {COMPANIES.map(company => (
-                    <SelectItem key={company} value={company}>
-                      {company.replace('[', '').replace(']', '')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-3 bg-white/10 p-2 rounded-xl border border-white/10 w-fit backdrop-blur-sm">
+                <Building2 className="w-4 h-4 text-[#00a9b4]" />
+                <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+                  <SelectTrigger className="w-[280px] border-none bg-transparent h-8 focus:ring-0 font-medium text-white">
+                    <SelectValue placeholder="Selecione a Empresa" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COMPANIES.map(company => (
+                      <SelectItem key={company} value={company}>
+                        {company.replace('[', '').replace(']', '')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {dbStatus && (
+                <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border backdrop-blur-sm ${
+                  dbStatus.status === 'connected' 
+                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
+                    : dbStatus.status === 'mock'
+                    ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                    : 'bg-rose-500/20 text-rose-400 border-rose-500/30'
+                }`}>
+                  <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                    dbStatus.status === 'connected' ? 'bg-emerald-400' : dbStatus.status === 'mock' ? 'bg-amber-400' : 'bg-rose-400'
+                  }`} />
+                  {dbStatus.status === 'connected' ? 'Banco de Dados: Conectado' : dbStatus.status === 'mock' ? 'Modo Demonstração' : 'Erro de Conexão'}
+                  {dbStatus.usingFallback && ' (Contingência)'}
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-6">

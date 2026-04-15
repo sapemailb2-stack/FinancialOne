@@ -64,4 +64,9 @@ export const api = {
     if (!response.ok) throw new Error('Failed to fetch DRE');
     return response.json();
   },
+  getStatus: async () => {
+    const response = await fetch('/api/status');
+    if (!response.ok) throw new Error('Failed to fetch status');
+    return response.json();
+  }
 };
