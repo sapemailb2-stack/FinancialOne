@@ -16,12 +16,30 @@ export async function fetchProcedure<T>(name: string, params: Record<string, str
   const query = new URLSearchParams(queryParams).toString();
   const url = `${API_BASE}/${name}${query ? `?${query}` : ''}`;
   
-  const response = await fetch(url);
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || `Failed to fetch ${name}`);
+  try {
+    const response = await fetch(url);
+    const contentType = response.headers.get("content-type");
+    
+    if (!response.ok) {
+      if (contentType && contentType.includes("application/json")) {
+        const error = await response.json();
+        throw new Error(error.message || `Erro na API: ${response.status}`);
+      } else {
+        const text = await response.text();
+        console.error("API Error (Non-JSON):", text.substring(0, 200));
+        throw new Error(`Erro no servidor (${response.status}). Verifique se o backend está rodando corretamente.`);
+      }
+    }
+
+    if (contentType && contentType.includes("application/json")) {
+      return response.json();
+    } else {
+      throw new Error("Resposta do servidor não é um JSON válido.");
+    }
+  } catch (err) {
+    console.error(`Fetch error for ${name}:`, err);
+    throw err;
   }
-  return response.json();
 }
 
 export const api = {
