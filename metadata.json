@@ -1,0 +1,5 @@
+{
+  "name": "Financial One - EVO",
+  "description": "Painel de indicadores financeiros em tempo real conectado ao SQL Server, visualizando Balancete, Contas a Pagar/Receber e Fluxo de Caixa.",
+  "requestFramePermissions": []
+}
