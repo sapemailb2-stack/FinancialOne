@@ -72,6 +72,7 @@ import {
 } from '@/src/types';
 import { format, startOfMonth, endOfMonth, startOfYear, endOfYear as getEndOfYear } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { MOCK_DATA } from '@/src/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -117,6 +118,7 @@ export default function Dashboard() {
   const [monthlyTotal, setMonthlyTotal] = useState(0);
   const [comparisonData, setComparisonData] = useState<any[]>([]);
   const [dbStatus, setDbStatus] = useState<{ status: string; server: string; error: string | null; usingFallback: boolean } | null>(null);
+  const [isLocalDemo, setIsLocalDemo] = useState(false);
 
   // Detail Modal State
   const [detailType, setDetailType] = useState<'pagar' | 'receber' | 'caixa' | null>(null);
@@ -230,6 +232,7 @@ export default function Dashboard() {
   );
 
   const fetchData = async () => {
+    if (isLocalDemo) return;
     setLoading(true);
     setError(null);
     try {
@@ -287,7 +290,49 @@ export default function Dashboard() {
   };
 
   const enableDemoMode = () => {
-    alert('Para ativar o modo de demonstração, adicione USE_MOCK_DATA="true" nas configurações (Secrets) do projeto.');
+    setIsLocalDemo(true);
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Load local mock data
+      setBalancete(MOCK_DATA.spcJBCBalancete1);
+      setPagarVencimento(MOCK_DATA.spcIPTContasAPagarPorVencimento);
+      setReceberVencimento(MOCK_DATA.spcJBCContasAReceberPorVencimento);
+      setFluxoCaixa(MOCK_DATA.spcJBCFluxoCaixa);
+      setFluxoAnalitico(MOCK_DATA.spcJBCFluxoCaixa_CARGA_Analitico);
+      setOrcadoRealizado(MOCK_DATA.spcJBC_OrcadoRealizado);
+      setDre(MOCK_DATA.view_dre);
+      
+      setLastUpdate(new Date());
+      
+      // Calculate totals
+      const monthly = MOCK_DATA.spcJBCFluxoCaixa.reduce((acc, curr) => acc + curr.Entradas, 0);
+      setMonthlyTotal(monthly);
+      setAnnualTotal(monthly * 12.5);
+      
+      setComparisonData([
+        { name: 'Jan', mensal: 45000, anual: 500000 },
+        { name: 'Fev', mensal: 52000, anual: 500000 },
+        { name: 'Mar', mensal: 48000, anual: 500000 },
+        { name: 'Abr', mensal: monthly, anual: 500000 },
+        { name: 'Mai', mensal: 0, anual: 500000 },
+        { name: 'Jun', mensal: 0, anual: 500000 },
+      ]);
+
+      setDbStatus({
+        status: 'mock',
+        server: 'LOCAL_DEMO',
+        database: 'MOCK',
+        error: null,
+        usingFallback: true
+      });
+
+    } catch (err) {
+      console.error("Error enabling local demo mode:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

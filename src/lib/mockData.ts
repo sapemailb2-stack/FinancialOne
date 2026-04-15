@@ -1,0 +1,71 @@
+export const MOCK_DATA = {
+  spcJBCBalancete1: [
+    { Conta: '1.01.01', Descricao: 'CAIXA GERAL', SaldoAnterior: 15000, Debito: 5000, Credito: 2000, SaldoAtual: 18000 },
+    { Conta: '1.01.02', Descricao: 'BANCO CONTA MOVIMENTO', SaldoAnterior: 450000, Debito: 120000, Credito: 150000, SaldoAtual: 420000 },
+    { Conta: '2.01.01', Descricao: 'FORNECEDORES NACIONAIS', SaldoAnterior: -85000, Debito: 45000, Credito: 60000, SaldoAtual: -100000 },
+  ],
+  spcIPTContasAPagarPorVencimento: [
+    { Vencimento: 'Hoje', Valor: 12500, Quantidade: 5, AcctName: 'FORNECEDORES DIVERSOS' },
+    { Vencimento: '7 Dias', Valor: 45000, Quantidade: 12, AcctName: 'IMPOSTOS A RECOLHER' },
+    { Vencimento: '15 Dias', Valor: 32000, Quantidade: 8, AcctName: 'SALARIOS A PAGAR' },
+    { Vencimento: '30 Dias', Valor: 89000, Quantidade: 25, AcctName: 'FORNECEDORES DIVERSOS' },
+  ],
+  spcIPTContasAPagarDetalhado: [
+    { Nome: 'FORNECEDOR A', Data: '2024-04-15', Valor: 5000.00, AcctName: 'FORNECEDORES DIVERSOS' },
+    { Nome: 'FORNECEDOR B', Data: '2024-04-16', Valor: 7500.00, AcctName: 'FORNECEDORES DIVERSOS' },
+    { Nome: 'IMPOSTO X', Data: '2024-04-18', Valor: 45000.00, AcctName: 'IMPOSTOS A RECOLHER' },
+    { Nome: 'FOLHA A', Data: '2024-04-20', Valor: 32000.00, AcctName: 'SALARIOS A PAGAR' },
+    { Nome: 'FORNECEDOR C', Data: '2024-04-22', Valor: 89000.00, AcctName: 'FORNECEDORES DIVERSOS' },
+  ],
+  spcJBCContasAReceberPorVencimento: [
+    { Vencimento: 'Hoje', Valor: 28000, Quantidade: 15 },
+    { Vencimento: '7 Dias', Valor: 62000, Quantidade: 22 },
+    { Vencimento: '15 Dias', Valor: 41000, Quantidade: 18 },
+    { Vencimento: '30 Dias', Valor: 156000, Quantidade: 45 },
+  ],
+  spcJBCContasPagarUnificado: [
+    { Nome: 'FORNECEDOR ALFA LTDA', Data: '2024-04-15', Valor: 5400.00 },
+    { Nome: 'SERVICOS BETA S.A.', Data: '2024-04-16', Valor: 1200.50 },
+    { Nome: 'GAMMA DISTRIBUIDORA', Data: '2024-04-18', Valor: 3500.00 },
+    { Nome: 'DELTA ENERGIA', Data: '2024-04-20', Valor: 850.00 },
+    { Nome: 'EPSILON TRANSPORTES', Data: '2024-04-22', Valor: 2100.00 },
+  ],
+  spcJBCContasReceberUnificado: [
+    { Nome: 'CLIENTE SOLUCOES ME', Data: '2024-04-15', Valor: 8900.00 },
+    { Nome: 'INDUSTRIA OMEGA', Data: '2024-04-17', Valor: 15400.00 },
+    { Nome: 'MERCADO SIGMA', Data: '2024-04-19', Valor: 3200.00 },
+    { Nome: 'CONSTRUTORA ZETA', Data: '2024-04-21', Valor: 12000.00 },
+    { Nome: 'TECNOLOGIA KAPPA', Data: '2024-04-25', Valor: 5600.00 },
+  ],
+  spcJBCFluxoCaixa: [
+    { Data: '2024-04-01', Entradas: 15000, Saidas: 12000, Saldo: 3000 },
+    { Data: '2024-04-02', Entradas: 22000, Saidas: 18000, Saldo: 7000 },
+    { Data: '2024-04-03', Entradas: 18000, Saidas: 25000, Saldo: 0 },
+    { Data: '2024-04-04', Entradas: 35000, Saidas: 20000, Saldo: 15000 },
+    { Data: '2024-04-05', Entradas: 28000, Saidas: 15000, Saldo: 28000 },
+  ],
+  spcJBCFluxoCaixa_CARGA_Analitico: [
+    { Data: '2024-04-01', Descricao: 'VENDA MERCADORIA', Tipo: 'Entrada', Valor: 5000, Banco: 'ITAU' },
+    { Data: '2024-04-01', Descricao: 'PAGTO FORNECEDOR', Tipo: 'Saída', Valor: 2000, Banco: 'BRADESCO' },
+    { Data: '2024-04-02', Descricao: 'RECEBIMENTO DUPLICATA', Tipo: 'Entrada', Valor: 8000, Banco: 'ITAU' },
+    { Data: '2024-04-02', Descricao: 'PAGTO LUZ', Tipo: 'Saída', Valor: 500, Banco: 'CAIXA' },
+    { Data: '2024-04-03', Descricao: 'VENDA SERVICO', Tipo: 'Entrada', Valor: 12000, Banco: 'SANTANDER' },
+  ],
+  spcJBC_OrcadoRealizado: [
+    { Mes: 'Jan', Orcado: 450000, Realizado: 420000, Desvio: -30000, Percentual: 93.3 },
+    { Mes: 'Fev', Orcado: 450000, Realizado: 465000, Desvio: 15000, Percentual: 103.3 },
+    { Mes: 'Mar', Orcado: 480000, Realizado: 440000, Desvio: -40000, Percentual: 91.7 },
+    { Mes: 'Abr', Orcado: 500000, Realizado: 512000, Desvio: 12000, Percentual: 102.4 },
+    { Mes: 'Mai', Orcado: 500000, Realizado: 0, Desvio: 0, Percentual: 0 },
+    { Mes: 'Jun', Orcado: 500000, Realizado: 0, Desvio: 0, Percentual: 0 },
+  ],
+  view_dre: [
+    { Descricao: 'RECEITA BRUTA', Valor: 1500000, Ordem: 1 },
+    { Descricao: 'DEDUCOES DA RECEITA', Valor: -250000, Ordem: 2 },
+    { Descricao: 'RECEITA LIQUIDA', Valor: 1250000, Ordem: 3 },
+    { Descricao: 'CUSTOS DOS PRODUTOS VENDIDOS', Valor: -700000, Ordem: 4 },
+    { Descricao: 'LUCRO BRUTO', Valor: 550000, Ordem: 5 },
+    { Descricao: 'DESPESAS OPERACIONAIS', Valor: -300000, Ordem: 6 },
+    { Descricao: 'RESULTADO LIQUIDO', Valor: 250000, Ordem: 7 },
+  ]
+};
